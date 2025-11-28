@@ -11,3 +11,13 @@ body{
     padding-bottom: 20px;
 
 }
+
+.card-container{
+    width:160px;
+    height: 240px;
+    background-color: blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
