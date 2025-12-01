@@ -31,9 +31,13 @@ body{
     position: relative; 
     width: 240px; 
     box-sizing: border-box; 
-    
 }
 
+.card-container:hover{
+    transform: scale(1.08);
+    transition: filter 0.3s ease, transform 0.3s ease;
+
+}
 .pokemon-id-background {
     position: absolute;
     top: 10px;
