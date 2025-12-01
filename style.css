@@ -9,13 +9,13 @@ body{
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: aqua;
+    background-color: rgb(28, 48, 48);
     padding-bottom: 20px;
 
 }
 
 #listPokemon {
-    background-color: rgb(238, 103, 103);
+    background-color: rgb(9, 32, 26);
     text-transform: uppercase;
     display: flex; 
     justify-content: space-around;
@@ -25,13 +25,13 @@ body{
 }
 
 .card-container {
-    background-color: rgb(239, 250, 91);
     border-radius: 40px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     padding: 15px;
     position: relative; 
     width: 240px; 
     box-sizing: border-box; 
+    
 }
 
 .pokemon-id-background {
