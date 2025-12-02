@@ -34,6 +34,7 @@ body{
     position: relative; 
     width: 240px; 
     box-sizing: border-box; 
+    overflow: hidden;
 }
 
 .card-container:hover{
@@ -41,6 +42,30 @@ body{
     transition: filter 0.3s ease, transform 0.3s ease;
 
 }
+
+.pokemon-watermark-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    font-size: 110px;
+    font-weight: 900;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.15) 0%, 
+        rgba(255, 255, 255, 0.05) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+.pokemon {
+    position: relative;
+    z-index: 1;
+}
+
 .pokemon-id-background {
     position: absolute;
     top: 10px;
@@ -53,6 +78,11 @@ body{
     opacity: 0.1;
 }
 
+.pokemon-image,
+.pokemon-info {
+    position: relative;
+    z-index: 2;
+}
 .pokemon-image {
     padding-inline: 10px;
     display: flex;

@@ -12,7 +12,8 @@ function formatAbilities(abilitiesArray) {
 
 function createPokemonCardHTML(dataDetails, typeColorsIcons) {
     const formattedId = `#${String(dataDetails.id).padStart(3, "0")}`;
-    
+        const plainId = String(dataDetails.id).padStart(3, "0");
+
     let typesHtml = '';
     for (const typeInfo of dataDetails.types) {
         const typeName = typeInfo.type.name;
@@ -25,12 +26,12 @@ function createPokemonCardHTML(dataDetails, typeColorsIcons) {
 
     return `
         <div class="pokemon">
+                    <div class="pokemon-watermark-card">${plainId}</div>
             <div class="pokemon-image">
                 <img src="${dataDetails.sprites.other.home.front_default}" alt="${dataDetails.name}">
             </div>
             <div class="pokemon-info">
-                <div class="pokemon-number">
-                    <p class="pokemon-id">${formattedId}</p>
+                <div>
                     <h2 class="pokemon-name">${dataDetails.name.toUpperCase()}</h2>
                 </div>
                 <div class="pokemon-type">
