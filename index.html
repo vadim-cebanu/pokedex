@@ -8,20 +8,37 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="./assets/fonts/Audiowide-Regular.ttf">
     <link rel="stylesheet" href="./styles/container.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    
 </head>
 
 <body>
+   <header>
     <div class="nav">
-        <img src="./assets/img/logo.png" class="logo">
-        <input type="text" id="SearchPkm">
+        <img src="./assets/img/logo.png"  class="logo" a href="index.html" alt="Pokedex Logo">
+        <h1>Gonna catch 'em all!</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search Pokémon..." minlength="3">
+            <button id="searchBtn" onclick="searchPokemon()">Search</button>
+        </div>
     </div>
-   
+</header>
         <div class="pokemon-list" id="listPokemon"></div>   
         <div class="zoom-container" id="zoomModal"></div> 
+
+        <div id="loader" style="display: none; text-align: center; padding: 20px;">
+    <div class="spinner"></div>
+        <p>Loading Pokémon...</p>
+    </div>
+    <div class="footer">
+        <button id="loadMoreBtn" onclick="renderPokemon(true)">Load More Pokémon</button>
+    </div>
+
    <script src="./scripts/color.js"></script>
    <script src="./scripts/template.js"></script>
    <script src="./scripts/script.js"></script>
+
+   
 </body>
 
 </html>
