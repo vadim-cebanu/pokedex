@@ -28,9 +28,22 @@ async function renderPokemon(loadMore = false) {
 async function searchPokemon() {
     const input = document.getElementById('searchInput');
     const value = input.value.toLowerCase().trim();
-    if (value.length < 1) return showSearchWarning();
+    if (value.length < 3) return showSearchWarning();
 
     prepareForSearch();
+
+    const filteredPokemons = pokemonsData.filter(pokemon => 
+        pokemon.name.toLowerCase().includes(value)
+    );
+    
+    if (filteredPokemons.length > 0) {
+        displayFilteredResult(filteredPokemons);
+        showSearchSuccess(filteredPokemons.length);
+        showShowAllButton();
+        finalizeLoadingState();
+        return;
+    }
+
     const URL = buildPokemonDetailsUrl(value);
     
     try {
@@ -107,8 +120,11 @@ function displayFilteredResult(filteredList) {
     pokemonContainer.innerHTML = '';
     filteredList.forEach((pokemon) => {
         const cardHTML = createPokemonCardHTML(pokemon, typeColorsIcons);
-        const originalIndex = pokemonsData.findIndex(p => p.id === pokemon.id); 
-        appendPokemonCard(cardHTML, pokemon, originalIndex !== -1 ? originalIndex : 0);
+        let originalIndex = pokemonsData.findIndex(p => p.id === pokemon.id);
+        if (originalIndex === -1) {
+            pokemonsData.push(pokemon);
+            originalIndex = pokemonsData.length - 1;
+        }        appendPokemonCard(cardHTML, pokemon, originalIndex !== -1 ? originalIndex : 0);
     });
 }
 
@@ -139,7 +155,7 @@ function enableSearchButton() {
     const searchBtn = document.getElementById('searchBtn');
     if (!searchBtn || !searchInput) return;
     
-    if (searchInput.value.trim().length >= 1) {
+    if (searchInput.value.trim().length >= 3) {
         searchBtn.disabled = false;
         searchBtn.style.opacity = '1';
         searchBtn.style.cursor = 'pointer';
@@ -168,6 +184,11 @@ function handleFetchError(error) {
 }
 
 function showSearchWarning() {
+    pokemonContainer.innerHTML = `
+        <div class="no-results">
+            <p>⚠️ Please enter at least 3 characters to search</p>
+        </div>
+    `;
 }
 
 function prepareForSearch() {
@@ -175,7 +196,6 @@ function prepareForSearch() {
     const loadButton = document.getElementById('loadMoreBtn');
     if (loadButton) loadButton.style.display = 'none';
     hideShowAllButton();
-
 }
 
 function showSearchSuccess(count) {
@@ -192,8 +212,7 @@ function displayNoResults(searchValue) {
             <p>No Pokémon found matching "${searchValue}"</p>
         </div>
     `;
-        showShowAllButton();
-
+    showShowAllButton();
 }
 
 function showLoadMoreButton() {
@@ -207,11 +226,12 @@ const searchInput = document.getElementById('searchInput');
 if (searchInput) {
     searchInput.addEventListener('keyup', (event) => {
         enableSearchButton();
-        if (event.key === 'Enter' && searchInput.value.trim().length >= 1) {
+        if (event.key === 'Enter' && searchInput.value.trim().length >= 3) {
             searchPokemon();
         }
     });
 }
+
 const loadMoreBtn = document.getElementById('loadMoreBtn');
 if (loadMoreBtn) {
     loadMoreBtn.addEventListener('click', () => {
