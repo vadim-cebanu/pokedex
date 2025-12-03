@@ -11,7 +11,6 @@ function formatAbilities(abilitiesArray) {
 }
 
 function createPokemonCardHTML(dataDetails, typeColorsIcons) {
-    const formattedId = `#${String(dataDetails.id).padStart(3, "0")}`;
         const plainId = String(dataDetails.id).padStart(3, "0");
 
     let typesHtml = '';
@@ -116,7 +115,7 @@ async function openContainer(i) {
 
             <div class="modal-tabs">
                 <button class="tab-button active" onclick="switchTab(event, 'about')">About</button>
-                <button class="tab-button" onclick="switchTab(event, 'stats')">Base Stats</button>
+                <button class="tab-button" onclick="switchTab(event, 'stats')">Stats</button>
                 <button class="tab-button" onclick="switchTab(event, 'evolution')">Evolution</button>
                 <button class="tab-button" onclick="switchTab(event, 'moves')">Moves</button>
             </div>
