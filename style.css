@@ -1,10 +1,12 @@
 html {
     font-family: "Audiowide", sans-serif;
+    background-color: rgb(9, 32, 26);
 }
 body{
     margin: 0 auto;
     max-width: 1920px;
-  font-family: "Audiowide", sans-serif;
+    font-family: "Audiowide", sans-serif;
+    background-color: rgb(9, 32, 26);
 }
 
 .nav{
@@ -14,7 +16,13 @@ body{
     flex-direction: column;
     background-color: rgb(28, 48, 48);
     padding-bottom: 20px;
+}
 
+.nav h1 {
+    text-align: center;
+    margin: 10px 0;
+    color: white;
+    width: 100%;
 }
 
 #listPokemon {
@@ -35,6 +43,7 @@ body{
     width: 240px; 
     box-sizing: border-box; 
     overflow: hidden;
+    cursor: pointer;
 }
 
 .card-container:hover{
@@ -122,7 +131,7 @@ body{
     background-color: rgb(69, 194, 20);
     padding: 4px 10px; 
     border-radius: 9999px; 
-    font-size: 12px; 
+    font-size: 16px; 
     font-weight: 500;
 }
 
@@ -133,7 +142,7 @@ body{
 .pokemon-type {
     display: flex;
     gap: 10px;
-    font-size: 10px;
+    font-size: 16px;
     font-weight: 500;
     flex-wrap: wrap;
     justify-content: center;
@@ -147,7 +156,7 @@ body{
 .pokemon-status {
     display: flex;
     gap: 10px;
-    font-size: 13.6px;
+    font-size: 16px;
 }
 
 .height, .weight {
@@ -156,12 +165,31 @@ body{
     border-radius: 9999px;
 }
 
+#loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 30px 40px;
+    border-radius: 15px;
+}
+
+#loader p {
+    color: white;
+    margin-top: 15px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
 .spinner {
     border: 4px solid #f3f3f3;
     border-top: 4px solid #3498db;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     animation: spin 1s linear infinite;
     margin: 0 auto;
 }
@@ -171,12 +199,15 @@ body{
     100% { transform: rotate(360deg); }
 }
 
-.footer {
+.more-btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
     padding: 8px;
     background-color: rgb(28, 48, 48);
     color: white;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .search-container {
@@ -314,14 +345,54 @@ body{
     .search-container {
         flex-direction: column;
         gap: 15px;
+        padding: 15px;
     }
     
     #searchInput {
-        width: 250px;
+        width: 90%;
+        max-width: 300px;
+        padding: 12px 20px;
     }
     
     #searchBtn, #showAllBtn {
-        width: 100%;
+        width: 90%;
         max-width: 300px;
+        padding: 12px 30px;
+    }
+}
+
+@media (max-width: 320px) {
+    .search-container {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .nav h1 {
+        font-size: 18px;
+        padding: 0 10px;
+    }
+    
+    #searchInput {
+        width: 95%;
+        max-width: 280px;
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+    
+    #searchBtn, #showAllBtn {
+        width: 95%;
+        max-width: 280px;
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+    
+    .more-btn-container {
+        padding: 10px 5px;
+        font-size: 16px;
+    }
+    
+    #loadMoreBtn {
+        font-size: 16px;
+        padding: 10px 20px;
     }
 }

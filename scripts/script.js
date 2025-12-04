@@ -4,6 +4,8 @@ let pokemonsData = [];
 let currentOffset = 0;
 const limit = 20;
 let isLoading = false;
+let isSearchActive = false;
+let filteredSearchResults = [];
 
 async function renderPokemon(loadMore = false) {
     if (isLoading) return;
@@ -25,7 +27,11 @@ async function renderPokemon(loadMore = false) {
 async function searchPokemon() {
     const input = document.getElementById('searchInput');
     const value = input.value.toLowerCase().trim();
-    if (value.length < 3) return showSearchWarning();
+    if (value.length < 3) {
+        showSearchWarning();
+        return;
+    }
+    
     prepareForSearch();
     const filteredPokemons = filterPokemonsByName(value);
     if (filteredPokemons.length > 0) return handleLocalSearchResults(filteredPokemons);
@@ -39,9 +45,11 @@ function filterPokemonsByName(value) {
 }
 
 function handleLocalSearchResults(filteredPokemons) {
+    isSearchActive = true;
+    filteredSearchResults = filteredPokemons;
     displayFilteredResult(filteredPokemons);
-    showSearchSuccess(filteredPokemons.length);
     showShowAllButton();
+    hideLoadMoreButton();
     finalizeLoadingState();
 }
 
@@ -49,9 +57,11 @@ async function searchPokemonFromAPI(value) {
     const URL = buildPokemonDetailsUrl(value);
     try {
         const data = await fetchData(URL);
+        isSearchActive = true;
+        filteredSearchResults = [data];
         displayFilteredResult([data]);
-        showSearchSuccess(1);
         showShowAllButton();
+        hideLoadMoreButton();
     } catch (error) {
         handleSearchError(error, value);
     } finally {
@@ -62,6 +72,8 @@ async function searchPokemonFromAPI(value) {
 function resetSearch() {
     clearSearchInput();
     pokemonContainer.innerHTML = '';
+    isSearchActive = false;
+    filteredSearchResults = [];
     displayAllPokemons();
     showLoadMoreButton();
     hideShowAllButton(); 
@@ -92,7 +104,7 @@ function hideShowAllButton() {
 async function processAndDisplayPokemons(pokemons, loadMore) {
     if (!loadMore) clearPokemonData();
     for (const p of pokemons) {
-        const details = await fetchPokemonDetails(p.url);
+        const details = await fetchData(p.url);
         addPokemonToData(details);
     }
 }
@@ -115,40 +127,18 @@ function appendPokemonCard(htmlContent, details, index) {
     pokemonContainer.appendChild(cardDiv);
 }
 
-function createCardElement(details) {
-    const cardDiv = document.createElement('div');
-    cardDiv.classList.add('card-container');
-    const mainType = details.types[0].type.name;
-    cardDiv.style.backgroundColor = typeColorsIcons[mainType];
-    return cardDiv;
-}
-
 function displayFilteredResult(filteredList) {
     pokemonContainer.innerHTML = '';
-    filteredList.forEach((pokemon) => {
+    filteredList.forEach((pokemon, index) => {
         const cardHTML = createPokemonCardHTML(pokemon, typeColorsIcons);
-        const originalIndex = getOrAddPokemonIndex(pokemon);
-        appendPokemonCard(cardHTML, pokemon, originalIndex);
+        appendPokemonCard(cardHTML, pokemon, index);
     });
-}
-
-function getOrAddPokemonIndex(pokemon) {
-    let originalIndex = pokemonsData.findIndex(p => p.id === pokemon.id);
-    if (originalIndex === -1) {
-        pokemonsData.push(pokemon);
-        originalIndex = pokemonsData.length - 1;
-    }
-    return originalIndex;
 }
 
 async function fetchData(URL) {
     const response = await fetch(URL);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return response.json();
-}
-
-async function fetchPokemonDetails(url) {
-    return fetchData(url);
 }
 
 function toggleLoadingState(state) {
@@ -161,16 +151,6 @@ function toggleLoadingState(state) {
 function finalizeLoadingState() {
     isLoading = false;
     toggleLoadingState(false);
-}
-
-function enableSearchButton() {
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
-    if (!searchBtn || !searchInput) return;
-    const isValid = searchInput.value.trim().length >= 3;
-    searchBtn.disabled = !isValid;
-    searchBtn.style.opacity = isValid ? '1' : '0.5';
-    searchBtn.style.cursor = isValid ? 'pointer' : 'not-allowed';
 }
 
 function buildPokemonListUrl(limit, offset) {
@@ -190,13 +170,7 @@ function handleFetchError(error) {
     console.error("ERROR", error);
 }
 
-function showSearchWarning() {
-    pokemonContainer.innerHTML = `
-        <div class="no-results">
-            <p>⚠️ Please enter at least 3 characters to search</p>
-        </div>
-    `;
-}
+
 
 function prepareForSearch() {
     toggleLoadingState(true);
@@ -205,25 +179,38 @@ function prepareForSearch() {
     hideShowAllButton();
 }
 
-function showSearchSuccess(count) {}
-
 function handleSearchError(error, value) {
     console.error("ERROR", error);
     displayNoResults(value);
 }
 
-function displayNoResults(searchValue) {
-    pokemonContainer.innerHTML = `
-        <div class="no-results">
-            <p>No Pokémon found matching "${searchValue}"</p>
-        </div>
-    `;
-    showShowAllButton();
-}
+
 
 function showLoadMoreButton() {
     const loadButton = document.getElementById('loadMoreBtn');
     if (loadButton) loadButton.style.display = 'block';
+}
+
+function hideLoadMoreButton() {
+    const loadButton = document.getElementById('loadMoreBtn');
+    if (loadButton) loadButton.style.display = 'none';
+}
+
+function closeZoomContainer() {
+    document.body.style.overflow = 'auto';
+    const modal = document.getElementById('zoomModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function switchTab(event, tabName) {
+    const tabs = document.querySelectorAll('.tab-content');
+    const buttons = document.querySelectorAll('.tab-button');
+    
+    tabs.forEach(tab => tab.classList.remove('active'));
+    buttons.forEach(btn => btn.classList.remove('active'));
+    
+    document.getElementById(tabName).classList.add('active');
+    event.target.classList.add('active');
 }
 
 renderPokemon();
@@ -231,7 +218,6 @@ renderPokemon();
 const searchInput = document.getElementById('searchInput');
 if (searchInput) {
     searchInput.addEventListener('keyup', (event) => {
-        enableSearchButton();
         if (event.key === 'Enter' && searchInput.value.trim().length >= 3) {
             searchPokemon();
         }

@@ -46,25 +46,22 @@ function createPokemonCardHTML(dataDetails, typeColorsIcons) {
 }
 
 async function openContainer(i) {
-    document.body.style.overflow = 'hidden';
-    const pokemonDetails = pokemonsData[i];
+    const currentList = isSearchActive ? filteredSearchResults : pokemonsData;
+    const pokemonDetails = currentList[i];
     const formattedId = `#${String(pokemonDetails.id).padStart(3, "0")}`;
     const primaryType = pokemonDetails.types[0].type.name;
     const bgColor = typeColorsIcons[primaryType] || "#A8A878";
 
     let evolutionHtml = '<p style="text-align: center; color: #999; padding: 40px;">Loading evolution...</p>';
     try {
-        const speciesResponse = await fetch(pokemonDetails.species.url);
-        const speciesData = await speciesResponse.json();
-        const evolutionResponse = await fetch(speciesData.evolution_chain.url);
-        const evolutionData = await evolutionResponse.json();
-        
+        const speciesData = await (await fetch(pokemonDetails.species.url)).json();
+        const evolutionData = await (await fetch(speciesData.evolution_chain.url)).json();
         evolutionHtml = await getEvolutionChainHTML(evolutionData.chain);
     } catch (error) {
         evolutionHtml = '<p style="text-align: center; color: #999; padding: 40px;">Evolution data unavailable</p>';
     }
 
-    const movesHtml = pokemonDetails.moves.slice(0, 20).map(moveInfo => {
+    const movesHtml = pokemonDetails.moves.slice(0, 8).map(moveInfo => {
         return `<div class="move-item">${moveInfo.move.name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</div>`;
     }).join('');
 
@@ -94,7 +91,7 @@ async function openContainer(i) {
             </div>
             
             ${i > 0 ? `<button class="nav-arrow nav-left" onclick="openContainer(${i - 1})">‹</button>` : ''}
-            ${i < pokemonsData.length - 1 ? `<button class="nav-arrow nav-right" onclick="openContainer(${i + 1})">›</button>` : ''}
+            ${i < (isSearchActive ? filteredSearchResults.length : pokemonsData.length) - 1 ? `<button class="nav-arrow nav-right" onclick="openContainer(${i + 1})">›</button>` : ''}
             
             <div class="modal-title">
                 <h1>${pokemonDetails.name.charAt(0).toUpperCase() + pokemonDetails.name.slice(1)}</h1>
@@ -154,6 +151,7 @@ async function openContainer(i) {
             </div>
         </div>
     `;
+    document.body.style.overflow = 'hidden';
     modal.style.display = "flex";
 }
 
@@ -163,8 +161,7 @@ async function getEvolutionChainHTML(chain) {
     
     while (current) {
         const pokemonId = current.species.url.split('/').filter(Boolean).pop();
-        const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
-        const pokemonData = await pokemonResponse.json();
+        const pokemonData = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)).json();
         
         evolutionHTML += `
             <div class="evolution-item">
@@ -185,18 +182,40 @@ async function getEvolutionChainHTML(chain) {
     return evolutionHTML;
 }
 
-function closeZoomContainer() {
-    document.body.style.overflow = 'auto';
-    modal.style.display = 'none';
+function createCardElement(details) {
+    const cardDiv = document.createElement('div');
+    cardDiv.classList.add('card-container');
+    const mainType = details.types[0].type.name;
+    cardDiv.style.backgroundColor = typeColorsIcons[mainType];
+    return cardDiv;
 }
 
-function switchTab(event, tabName) {
-    const tabs = document.querySelectorAll('.tab-content');
-    const buttons = document.querySelectorAll('.tab-button');
-    
-    tabs.forEach(tab => tab.classList.remove('active'));
-    buttons.forEach(btn => btn.classList.remove('active'));
-    
-    document.getElementById(tabName).classList.add('active');
-    event.target.classList.add('active');
+function appendPokemonCard(htmlContent, details, index) {
+    const pokemonContainer = document.getElementById('listPokemon');
+    const cardDiv = createCardElement(details);
+    cardDiv.innerHTML = htmlContent;
+    cardDiv.addEventListener('click', () => openContainer(index));
+    pokemonContainer.appendChild(cardDiv);
+}
+
+function showSearchWarning() {
+    const pokemonContainer = document.getElementById('listPokemon');
+    pokemonContainer.innerHTML = ''; 
+    pokemonContainer.innerHTML = `
+        <div class="no-results">
+            <p>⚠️ Please enter at least 3 characters to search</p>
+        </div>
+    `;
+    hideLoadMoreButton();
+    showShowAllButton();
+}
+
+function displayNoResults(searchValue) {
+    const pokemonContainer = document.getElementById('listPokemon');
+    pokemonContainer.innerHTML = `
+        <div class="no-results">
+            <p>No Pokémon found matching "${searchValue}"</p>
+        </div>
+    `;
+    showShowAllButton();
 }

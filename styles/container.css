@@ -12,13 +12,16 @@
 }
 
 .details-panel {
-    width: 400px;
+    width: 440px; 
+    height: 700px;
     max-height: 90vh;
     border-radius: 30px;
-    overflow-y: auto;
+    overflow: hidden;
     position: relative;
     border: 3px solid transparent;
-    animation: modalSlideIn 0.4s ease-out, borderPulse 2s ease-in-out infinite;
+    animation:  borderPulse 2s ease-in-out infinite;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes borderPulse {
@@ -50,6 +53,7 @@
     display: flex;
     justify-content: space-between;
     padding: 20px 20px 10px;
+    flex-shrink: 0;
 }
 
 .back-button, .favorite-button {
@@ -69,6 +73,7 @@
     align-items: center;
     padding: 0 30px;
     color: white;
+    flex-shrink: 0;
 }
 
 .modal-title h1 {
@@ -86,7 +91,8 @@
 .modal-types-top {
     display: flex;
     gap: 10px;
-    padding: 10px 30px;
+    padding: 0px 30px;
+    flex-shrink: 0;
 }
 
 .type-pill {
@@ -94,7 +100,7 @@
     padding: 6px 16px;
     border-radius: 20px;
     color: white;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
 }
 
@@ -109,7 +115,8 @@
 
 .modal-image-large {
     text-align: center;
-    padding: 20px 0;
+    padding: 8px 0;
+    flex-shrink: 0;
     position: relative;
     z-index: 2;
     display: flex;
@@ -118,8 +125,8 @@
 }
 
 .modal-image-large img {
-    width: 220px;
-    height: 220px;
+    width: 160px;
+    height: 160px;
     filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
     margin: 0 auto;
     display: block;
@@ -131,35 +138,40 @@
     background: white;
     border-bottom: 1px solid #E0E0E0;
     padding: 0 20px;
+    flex-shrink: 0;
 }
 
 .evolution-chain {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
     flex-wrap: wrap;
+    gap: 5px;
+    padding: 10px 0;
 }
 
 .evolution-item {
     text-align: center;
+    max-width: 100px;
 }
 
 .evolution-item img {
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
 }
 
 .evolution-item p {
-    margin-top: 10px;
+    margin-top: 3px;
     font-weight: 600;
     color: #333;
+    font-size: 16px;
+    word-wrap: break-word;
 }
 
 .evolution-arrow {
-    font-size: 30px;
+    font-size: 18px;
     color: #666;
-    margin: 0 20px;
+    margin: 0 5px;
 }
 
 .moves-grid {
@@ -174,7 +186,7 @@
     padding: 12px;
     border-radius: 8px;
     text-align: center;
-    font-size: 14px;
+    font-size: 16px;
     color: #333;
     font-weight: 500;
 }
@@ -183,9 +195,9 @@
     font-family: "Audiowide", sans-serif;
     background: none;
     border: none;
-    padding: 15px 5px;
+    padding: 8px 5px;
     color: #999;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     position: relative;
@@ -208,10 +220,12 @@
 
 .tab-content {
     display: none;
-    padding: 25px 30px;
+    padding: 10px 30px;
     background: white;
     border-bottom-left-radius: 30px;
     border-bottom-right-radius: 30px;
+    flex: 1;
+    overflow-y: auto;
 }
 
 .tab-content.active {
@@ -227,13 +241,13 @@
 
 .info-label {
     color: #999;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
 }
 
 .info-value {
     color: #333;
-    font-size: 14px;
+    font-size: 16px;
     text-align: right;
     flex: 1;
     margin-left: 20px;
@@ -262,14 +276,14 @@
 }
 
 .stat-name {
-    font-size: 12px;
+    font-size: 16px;
     color: #999;
     font-weight: 600;
     min-width: 80px;
 }
 
 .stat-value {
-    font-size: 14px;
+    font-size: 16px;
     color: #333;
     font-weight: 600;
     min-width: 30px;
@@ -292,7 +306,7 @@
 
 .nav-arrow {
     position: absolute;
-    top: 50%;
+    top: 35%;
     transform: translateY(-50%);
     background: rgba(234, 233, 236, 0.534);
     border: none;
@@ -319,8 +333,9 @@
 
 @media (max-width: 768px) {
     .details-panel {
-        width: 90%;
-        max-width: 350px;
+        width: 380px;
+        height: 650px;
+        max-height: 85vh;
     }
     
     .nav-arrow {
@@ -333,13 +348,87 @@
     .nav-right { right: 10px; }
 }
 
+@media (max-width: 480px) {
+    .details-panel {
+        width: 340px; 
+        height: 600px; 
+        max-height: 80vh;
+    }
+}
+
 @media (max-width: 320px) {
-    .pokemon-name {
-        font-size: 14px;
+    .details-panel {
+        width: 300px;
+        height: 550px;
+        max-height: 90vh;
     }
     
-    .type {
-        font-size: 10px;
-        padding: 4px 8px;
+    .modal-title h1 {
+        font-size: 20px;
+    }
+    
+    .modal-id {
+        font-size: 16px;
+    }
+    
+    .type-pill {
+        font-size: 16px;
+        padding: 4px 10px;
+    }
+    
+    .modal-image-large img {
+        max-width: 120px;
+        max-height: 120px;
+    }
+    
+    .tab-button {
+        font-size: 16px;
+        padding: 6px 3px;
+    }
+    
+    .info-row {
+        padding: 8px 0;
+    }
+    
+    .info-label,
+    .info-value {
+        font-size: 16px;
+    }
+    
+    .stat-name {
+        font-size: 16px;
+        min-width: 60px;
+    }
+    
+    .stat-value {
+        font-size: 16px;
+    }
+    
+    .stat-row {
+        gap: 8px;
+        padding: 6px 0;
+    }
+    
+    .move-item {
+        font-size: 16px;
+        padding: 8px;
+    }
+    
+    .tab-content {
+        padding: 15px 20px;
+    }
+    
+    .nav-arrow {
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
+    }
+
+    #evolution{
+        overflow: hidden;
+    }
+
+    .more-btn-container {
+        margin-bottom: 0px;
     }
 }
