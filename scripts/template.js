@@ -69,3 +69,57 @@ async function buildEvolutionItems(current) {
     
     return itemHTML;
 }
+
+function createModalHTML(pokemonDetails, currentIndex, totalCount, evolutionHtml, statsHtml, movesHtml, abilitiesHtml, bgColor) {
+    const formattedId = `#${String(pokemonDetails.id).padStart(3, "0")}`;
+    const capitalizedName = pokemonDetails.name.charAt(0).toUpperCase() + pokemonDetails.name.slice(1);
+    
+    return `<div class="details-panel" style="background: linear-gradient(to bottom, ${bgColor} 0%, ${bgColor} 40%, white 40%);">
+                    <div class="modal-header">
+                        <span class="back-button close-modal-btn">✕</span>
+                    </div>
+                    ${currentIndex > 0 ? `<button class="nav-arrow nav-left" data-index="${currentIndex - 1}">‹</button>` : ''}
+                    ${currentIndex < totalCount - 1 ? `<button class="nav-arrow nav-right" data-index="${currentIndex + 1}">›</button>` : ''}
+                    <div class="modal-title">
+                        <h1>${capitalizedName}</h1>
+                        <span class="modal-id">${formattedId}</span>
+                    </div>
+                    <div class="modal-types-top">
+                        ${pokemonDetails.types.map(typeInfo => 
+                            `<span class="type-pill">${typeInfo.type.name.charAt(0).toUpperCase() + typeInfo.type.name.slice(1)}</span>`
+                        ).join('')}
+                    </div>
+                    <div class="modal-image-large">
+                        <img src="${pokemonDetails.sprites.other['official-artwork'].front_default || pokemonDetails.sprites.front_default}" alt="${pokemonDetails.name}">
+                    </div>
+                    <div class="modal-tabs">
+                        <button class="tab-button active" data-tab="about">About</button>
+                        <button class="tab-button" data-tab="stats">Stats</button>
+                        <button class="tab-button" data-tab="evolution">Evolution</button>
+                        <button class="tab-button" data-tab="moves">Moves</button>
+                    </div>
+                    <div id="about" class="tab-content active">
+                        <div class="info-row">
+                            <span class="info-label">Species</span>
+                            <span class="info-value">${pokemonDetails.species.name.charAt(0).toUpperCase() + pokemonDetails.species.name.slice(1)}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Height</span>
+                            <span class="info-value">${(pokemonDetails.height / 10).toFixed(1)} m</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Weight</span>
+                            <span class="info-value">${(pokemonDetails.weight / 10).toFixed(1)} kg</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Abilities</span>
+                            <span class="info-value">${abilitiesHtml}</span>
+                        </div>
+                    </div>
+                    <div id="stats" class="tab-content">${statsHtml}</div>
+                    <div id="evolution" class="tab-content">${evolutionHtml}</div>
+                    <div id="moves" class="tab-content">
+                        <div class="moves-grid">${movesHtml}</div>
+                    </div>
+                </div>`;
+}

@@ -268,11 +268,45 @@ async function openContainer(i) {
     const statsHtml = generateStatsHTML(pokemonDetails.stats);
     const movesHtml = generateMovesHTML(pokemonDetails.moves);
     const abilitiesHtml = formatAbilities(pokemonDetails.abilities);
-    const formattedId = `#${String(pokemonDetails.id).padStart(3, "0")}`;
     const primaryType = pokemonDetails.types[0].type.name;
     const bgColor = typeColorsIcons[primaryType] || "#A8A878";
-    const modalHTML = `<div class="details-panel" style="background: linear-gradient(to bottom, ${bgColor} 0%, ${bgColor} 40%, white 40%);"><div class="modal-header"><span class="back-button" onclick="closeZoomContainer()">✕</span></div>${i > 0 ? `<button class="nav-arrow nav-left" onclick="openContainer(${i - 1})">‹</button>` : ''}${i < currentList.length - 1 ? `<button class="nav-arrow nav-right" onclick="openContainer(${i + 1})">›</button>` : ''}<div class="modal-title"><h1>${pokemonDetails.name.charAt(0).toUpperCase() + pokemonDetails.name.slice(1)}</h1><span class="modal-id">${formattedId}</span></div><div class="modal-types-top">${pokemonDetails.types.map(typeInfo => `<span class="type-pill">${typeInfo.type.name.charAt(0).toUpperCase() + typeInfo.type.name.slice(1)}</span>`).join('')}</div><div class="modal-image-large"><img src="${pokemonDetails.sprites.other['official-artwork'].front_default || pokemonDetails.sprites.front_default}" alt="${pokemonDetails.name}"></div><div class="modal-tabs"><button class="tab-button active" onclick="switchTab(event, 'about')">About</button><button class="tab-button" onclick="switchTab(event, 'stats')">Stats</button><button class="tab-button" onclick="switchTab(event, 'evolution')">Evolution</button><button class="tab-button" onclick="switchTab(event, 'moves')">Moves</button></div><div id="about" class="tab-content active"><div class="info-row"><span class="info-label">Species</span><span class="info-value">${pokemonDetails.species.name.charAt(0).toUpperCase() + pokemonDetails.species.name.slice(1)}</span></div><div class="info-row"><span class="info-label">Height</span><span class="info-value">${(pokemonDetails.height / 10).toFixed(1)} m</span></div><div class="info-row"><span class="info-label">Weight</span><span class="info-value">${(pokemonDetails.weight / 10).toFixed(1)} kg</span></div><div class="info-row"><span class="info-label">Abilities</span><span class="info-value">${abilitiesHtml}</span></div></div><div id="stats" class="tab-content">${statsHtml}</div><div id="evolution" class="tab-content">${evolutionHtml}</div><div id="moves" class="tab-content"><div class="moves-grid">${movesHtml}</div></div></div>`;
+    
+    const modalHTML = createModalHTML(
+        pokemonDetails, 
+        i, 
+        currentList.length, 
+        evolutionHtml, 
+        statsHtml, 
+        movesHtml, 
+        abilitiesHtml, 
+        bgColor
+    );
+    
     displayModal(modalHTML);
+    attachModalEventListeners();
+}
+
+function attachModalEventListeners() {
+    const closeBtn = modal.querySelector('.close-modal-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeZoomContainer);
+    }
+
+    const navButtons = modal.querySelectorAll('.nav-arrow');
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const index = parseInt(btn.dataset.index);
+            openContainer(index);
+        });
+    });
+
+    const tabButtons = modal.querySelectorAll('.tab-button');
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const tabName = btn.dataset.tab;
+            switchTab(e, tabName);
+        });
+    });
 }
 
 renderPokemon();
