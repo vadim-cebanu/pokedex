@@ -202,8 +202,6 @@ function handleSearchError( value) {
     displayNoResults(value);
 }
 
-
-
 function showLoadMoreButton() {
     const loadButton = document.getElementById('loadMoreBtn');
     if (loadButton) loadButton.style.display = 'block';

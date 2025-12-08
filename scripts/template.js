@@ -11,21 +11,20 @@ function formatAbilities(abilitiesArray) {
 }
 
 function createPokemonCardHTML(dataDetails, typeColorsIcons) {
-        const plainId = String(dataDetails.id).padStart(3, "0");
+    const plainId = String(dataDetails.id).padStart(3, "0");
 
-    let typesHtml = '';
-    for (const typeInfo of dataDetails.types) {
+    const typesHtml = dataDetails.types.map(typeInfo => {
         const typeName = typeInfo.type.name;
         const typeColor = typeColorsIcons[typeName];
-        typesHtml += `<p class="${typeName} type"
-                         style="background-color: ${typeColor};">
-                         ${typeName.toUpperCase()}
-                     </p>`;
-    }
+        return `<p class="${typeName} type"
+                   style="background-color: ${typeColor};">
+                   ${typeName.toUpperCase()}
+               </p>`;
+    }).join('');
 
     return `
         <div class="pokemon">
-                    <div class="pokemon-watermark-card">${plainId}</div>
+            <div class="pokemon-watermark-card">${plainId}</div>
             <div class="pokemon-image">
                 <img src="${dataDetails.sprites.other.home.front_default}" alt="${dataDetails.name}">
             </div>
@@ -46,28 +45,27 @@ function createPokemonCardHTML(dataDetails, typeColorsIcons) {
 }
 
 async function getEvolutionChainHTML(chain) {
-    let evolutionHTML = '<div class="evolution-chain">';
-    let current = chain;
+    const evolutionItems = await buildEvolutionItems(chain);
+    return `<div class="evolution-chain">${evolutionItems}</div>`;
+}
+
+async function buildEvolutionItems(current) {
+    if (!current) return '';
     
-    while (current) {
-        const pokemonId = current.species.url.split('/').filter(Boolean).pop();
-        const pokemonData = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)).json();
-        
-        evolutionHTML += `
-            <div class="evolution-item">
-                <img src="${pokemonData.sprites.other['official-artwork'].front_default}" 
-                     alt="${current.species.name}">
-                <p>${current.species.name.charAt(0).toUpperCase() + current.species.name.slice(1)}</p>
-            </div>`;
-        
-        if (current.evolves_to.length > 0) {
-            evolutionHTML += '<div class="evolution-arrow">→</div>';
-            current = current.evolves_to[0];
-        } else {
-            current = null;
-        }
+    const pokemonId = current.species.url.split('/').filter(Boolean).pop();
+    const pokemonData = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`).then(r => r.json());
+    
+    const itemHTML = `
+        <div class="evolution-item">
+            <img src="${pokemonData.sprites.other['official-artwork'].front_default}" 
+                 alt="${current.species.name}">
+            <p>${current.species.name.charAt(0).toUpperCase() + current.species.name.slice(1)}</p>
+        </div>`;
+    
+    if (current.evolves_to.length > 0) {
+        const nextHTML = await buildEvolutionItems(current.evolves_to[0]);
+        return itemHTML + '<div class="evolution-arrow">→</div>' + nextHTML;
     }
     
-    evolutionHTML += '</div>';
-    return evolutionHTML;
+    return itemHTML;
 }
